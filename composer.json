@@ -1,5 +1,9 @@
 {
+<<<<<<< HEAD
     "name": "huy/zend_jquery_profile",
+=======
+    "name": "huy/jquey",
+>>>>>>> 161eb9f1059b49c3c455023835dc111d79405f0e
     "type": "project",
     "license": "MIT",
     "authors": [
