@@ -1,0 +1,8 @@
+#control, #view{
+    float: left;
+    width: 300px;
+}
+#view table{
+    width: 100%;
+    text-align: center;
+}
