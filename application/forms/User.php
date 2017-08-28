@@ -16,12 +16,12 @@ class Application_Form_User extends Zend_Form
                ->setRequired(true)
                ->addFilter('StringTrim');
        $userAge->addValidator('NotEmpty')->getValidator('NotEmpty')->setMessage('input user age is empty!');
-       
-       $btnShow = new Zend_Form_Element_Button('Show');
-       $btnAdd = new Zend_Form_Element_Button('Add');
-       $btnUpdate = new Zend_Form_Element_Button('Update');
+       $userAge->addValidator('Int',false)->getValidator('Int')->setMessage('must be integer');
 
-       $this->addElements([$userName,$userAge,$btnShow,$btnAdd,$btnUpdate]);
+       $btnAdd = new Zend_Form_Element_Submit('Add');
+       $btnUpdate = new Zend_Form_Element_Submit('Update');
+
+       $this->addElements([$userName,$userAge,$btnAdd,$btnUpdate]);
 
        foreach($this->getElements() as $element){
            $element->setDecorators(['ViewHelper']);

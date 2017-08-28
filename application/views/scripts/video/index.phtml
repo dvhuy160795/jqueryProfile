@@ -1,0 +1,60 @@
+<script src="style/js/jquery-3.2.1.min.js"></script>
+<script src="style/js/jsVideo.js"></script>
+<?php
+$videoForm = $this->videoForm; // @var $videoForm VideoController
+$videos = $this->videos; //@var $videos VideoController
+
+//form
+$videoNameLabel = $videoForm->name->getLabel();
+$videoName = $videoForm->name;
+$videoNameErr = $videoForm->name->getMessages();
+
+$videoUserLabel = $videoForm->user->getLabel();
+$videoUser = $videoForm->user;
+$videoUserErr = $videoForm->user->getMessages();
+
+$btnSubmit = $videoForm->submit;
+$videoResetData = $videoForm->Reset;
+?>
+<form method="post">
+    <table>
+        <tr>
+            <td><?php echo $videoNameLabel ?></td>
+            <td><?php echo $videoName ?></td>
+        </tr>
+        <tr>
+            <td><?php echo $videoUserLabel ?></td>
+            <td><?php echo $videoUser ?></td>
+        </tr>
+        <tr>
+            <td ><?php echo $btnSubmit ?></td>
+            <td ><?php echo $videoResetData ?></td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <ul id="messageErr">
+                    
+                </ul>
+            </td>
+        </tr>
+    </table>
+</form>
+<table>
+    <thead>
+    <tr>
+        <th>name</th>
+        <th>user</th>
+    </tr>
+    </thead>
+    <tbody id="showInfo">
+    <?php foreach ($videos as $video) : 
+        $name = $video['name'];
+        $user = $video['user'];
+    ?>  
+        <tr>
+            <td><?php echo $name ?></td>
+            <td><?php echo $user ?></td>
+        </tr>
+    <?php endforeach;?>
+    <tbody>
+</table>

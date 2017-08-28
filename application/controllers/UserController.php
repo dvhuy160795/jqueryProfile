@@ -11,27 +11,63 @@ class UserController extends Zend_Controller_Action
     public function indexAction()
     {
         $formUser = new Application_Form_User();
+        $userTable = new Zend_Db_Table('tblUsers');
 
+        $rawUser = $userTable->fetchAll();
+        $users = $rawUser->toArray();
+        
+        $isUserPostData = $this->getRequest()->isPost();
+        if($isUserPostData){
+            $dataUserPost = $this->getRequest()->getPost();
+            $isValidUserData = $formUser->isValid($dataUserPost);
+            
+            if($isUserPostData){
+                // xử lý form
+            }
+        }
         $this->view->form = $formUser;
-
+        $this->view->users = $users;
         
     }
 
     public function showAction()
     {
        // $this->_helper->viewRenderer->setNoRender();
-        $userTable = new Zend_Db_Table('tblUsers');
-        $rawUser = $userTable->fetchAll();
-        $users = $rawUser->toArray();
-        $this->view->users = $users;
+       
     }
 
     public function addAction()
     {
+        $formUser = new Application_Form_User();
         $userTable = new Zend_Db_Table('tblUsers');
+
         if(isset($_POST)){
-            var_dump($_POST);
-            $userTable->insert($_POST);
+            $isValidUserData = $formUser->isValid($_POST);
+            $nameErr = $formUser->name->getMessages();
+            $ageErr = $formUser->age->getMessages();
+            $defineMessages = [
+                    'success' => true
+                    ];
+            
+            if($isValidUserData){
+                $userTable->insert($_POST);
+            }else{
+                $defineMessages['success'] = false;
+                /* set message error by jquery */
+                $err = [
+                    'tdNameErr' => [],
+                    'tdAgeErr' => [],
+                ];
+                if(!empty($nameErr)){
+                    $err['tdNameErr']= $nameErr;
+                }
+                if(!empty($ageErr)){
+                    $err['tdAgeErr']= $ageErr;
+                }
+                $defineMessages['err'] = $err;
+            }
+        echo json_encode($defineMessages);
+            
         }
     }
 

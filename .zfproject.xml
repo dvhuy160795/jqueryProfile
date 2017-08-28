@@ -17,9 +17,15 @@
           <actionMethod actionName="show"/>
           <actionMethod actionName="add"/>
         </controllerFile>
+        <controllerFile controllerName="Video">
+          <actionMethod actionName="index"/>
+          <actionMethod actionName="getErrForm"/>
+          <actionMethod actionName="delete"/>
+        </controllerFile>
       </controllersDirectory>
       <formsDirectory>
         <formFile formName="User"/>
+        <formFile formName="Video"/>
       </formsDirectory>
       <layoutsDirectory>
         <layoutScriptsDirectory>
@@ -28,6 +34,7 @@
       </layoutsDirectory>
       <modelsDirectory>
         <modelFile modelName="User"/>
+        <modelFile modelName="Video"/>
       </modelsDirectory>
       <modulesDirectory enabled="false"/>
       <viewsDirectory>
@@ -46,6 +53,15 @@
           </viewControllerScriptsDirectory>
           <viewControllerScriptsDirectory forControllerName="User">
             <viewScriptFile forActionName="add"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Video">
+            <viewScriptFile forActionName="index"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Video">
+            <viewScriptFile forActionName="getErrForm"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="Video">
+            <viewScriptFile forActionName="delete"/>
           </viewControllerScriptsDirectory>
         </viewScriptsDirectory>
         <viewHelpersDirectory/>
