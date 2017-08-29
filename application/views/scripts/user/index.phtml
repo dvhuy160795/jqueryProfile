@@ -3,7 +3,7 @@
 <script src="style/js/jsProfile.js"></script>
 
 <?php 
-$formUser = $this->form;
+$formUser = $this->form; /* @var $formUser Application_Form_User */
 
 $nameLabel = $formUser->name->getLabel();
 $name = $formUser->name;
@@ -16,6 +16,7 @@ $btnShow = $formUser->Show;
 $btnAdd = $formUser->Add;
 $btnUpdate = $formUser->Update;
 ?>
+<!-- action with form user -->
 <div id="view-content">
 	<p>View script for controller <b>User</b> and script/action name <b>index</b></p>
 	<div id="control">
@@ -25,22 +26,18 @@ $btnUpdate = $formUser->Update;
 				<td><?php echo $nameLabel; ?></td>
 				<td><?php echo $name; ?></td>
 			</tr>
-			<tr id="nameErr">
-				<td id="tdNameErr" colspan="2">
-					<?php foreach ($nameErr as $message) :?>
-						<p><?php echo $message ?></p>
-					<?php endforeach;?>
+			<tr id="nameErr" class="error-message">
+				<td id="tdNameErr"  colspan="2">
+					
 				</td>
 			</tr>
 			<tr>
 				<td><?php echo $ageLabel; ?></td>
 				<td><?php echo $age; ?></td>
 			</tr>
-			<tr id="ageErr">
-				<td id="tdAgeErr" colspan="2">
-					<?php foreach ($ageErr as $message) :?>
-						<p><?php echo $message ?></p>
-					<?php endforeach;?>
+			<tr id="ageErr" class="error-message">
+				<td id="tdAgeErr"  colspan="2">
+					
 				</td>
 			</tr>
 			<tr>
@@ -53,6 +50,7 @@ $btnUpdate = $formUser->Update;
 		</table>
 		</form>
 	</div>
+	<!-- show information user-->
 	<div id="view">
 		<table id="tableShowProfile">
 			<thead>

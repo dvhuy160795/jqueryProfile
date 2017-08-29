@@ -1,40 +1,45 @@
-(function($){
+//best practice
+(function(profilePage){
+    profilePage(window.jQuery);
+}(function($){
     $(processProfile);
+
     function processProfile(){
         var $name = $('#name');
         var $age = $('#age');
-        var $idUser = $('#idUser');
-        var $btnShow = $('#Show');
-        var $btnAdd = $('#Add');
-        var $btnUpdate = $('#Update');
+        var $userId = $('#idUser');
+        var $buttonAdd = $('#Add');
+        var $buttonUpdate = $('#Update');
         var $profileInfo = $('#lineInfo');
         var $classRowUserInfo = $('#lineInfo .rowUserInfo');
         var $nameErr = $('#nameErr');
         var $ageErr = $('#ageErr');
-      
-        $btnAdd.click(addProfileUser);
+        var $errorArea = $('.error-message');
+
+        $buttonAdd.click(addProfileUser);
         $classRowUserInfo.click(displayForEdit);
-        $btnUpdate.click(saveEditProfile);
-        // $('body').on('dblclick', '#lineInfo .rowUserInfo',displayForEdit);
+        $buttonUpdate.click(saveEditProfile);
         
-        function addProfileUser(e){
-            e.preventDefault(e);
-            
+        function addProfileUser(event) {      
             var name = $name.val();
             var age = $age.val();
-            //alert(name+age);
-            var sendInfo = $.ajax({
+            var addingUser = $.ajax({
                 type: "post",
                 url: "user/add",
                 data: {name: name, age: age},
                 dataType: "json",
             });
-            sendInfo.then(reupDataFormUser);
 
+            resetMessageError();
+            event.preventDefault();
+            addingUser
+                .done(appendItemUser)
+                .fail(displayInputError);
+            
         }
 
         function displayForEdit(){
-            $id = $(this).attr('id');
+            var $id = $(this).attr('id');
 
             $setId = "#"+$id;
             name = $($setId+" .name").text();
@@ -42,65 +47,67 @@
 
             $name.val(name);
             $age.val(age);
-            $idUser.val($id);
+            $userId.val($id);
         }
 
-        function saveEditProfile(e){
-            e.preventDefault(e);
-
+        function saveEditProfile(event){
+            var userId = $userId.val()
             var name = $name.val();
             var age = $age.val();
-            var loadActUpdate = $.ajax({
+            var loadingActUpdate = $.ajax({
                 url: "user/update",
                 type: "post",
                 dataType: "json",
-                data: {name: name , age: age , id: $id}
+                data: {name: name , age: age , id: userId}
             });
-            
-            loadActUpdate.then(addItemUser);
 
+            event.preventDefault();
+            resetMessageError();
+            loadingActUpdate.done(editItemUser);
+            loadingActUpdate.fail(displayInputError);
+            // loadingActUpdate.fail(function(jqXHR, textStatus, errorThrown ){
+            //     console.log(jqXHR, textStatus, errorThrown );
+            // });
         }
 
-        // display Errors if invalid or add item profile if valid then Add profile 
-        function reupDataFormUser(profileErrors){
-            var name = $name.val();
-            var age = $age.val();
-            /* get message error by jquery*/
-            console.log(profileErrors);
-            if (!profileErrors.success) {
-                $.each(profileErrors.err,getErrMessages);
-            }else{
-                $.each(profileErrors.err,getErrMessages);
-                var itemUser = '<tr id="'+profileErrors.lastInsertId+'" class="rowUserInfo"><td>'+name+'</td><td>'+age+'</td></tr>';
-                $profileInfo.append(itemUser);
-            }
+        // display edit item profile if valid then update profile 
+        function editItemUser(dataFormSended){
+            userId = dataFormSended.id;
+            userName = dataFormSended.name;
+            userAge = dataFormSended.age;
+            $tdUserName = $("#"+ userId + " .name");
+            $tdUserAge = $("#" + userId + " .age");
+
+            $tdUserName.html(userName);
+            $tdUserAge.html(userAge);
         }
-        // display Errors if invalid or add item profile if valid then update profile 
-        function addItemUser(dataFormSended){
-            var $id = $("#idUser").val();
-            var name = $name.val();
-            var age = $age.val();
-            if(!dataFormSended.success){
-                $.each(dataFormSended.err,getErrMessages);
-            }else{
-                $.each(dataFormSended.err,getErrMessages);
-                
-                $setId = "#"+$id;
-                var tdname = $($setId+" .name").text(name);
-                var tdname = $($setId+" .age").text(age);
-            }
-                
+
+        function appendItemUser(profile){
+            var itemUser = '<tr id="'+profile.id+'" class="rowUserInfo"><td>'+profile.name+'</td><td>'+profile.age+'</td></tr>';
+            $profileInfo.append(itemUser);
         }
+
         // get list messageErrors 
-        function getErrMessages(errFeildId,errMessages){
-            var feildIdName = "#"+ errFeildId;
-            var tdError = $(feildIdName);
-            var errorHtml ='';
+        function displayInputError(resp){
+            var error = resp.responseJSON;
+            var message = error.message;
+            var mapFieldIdToMessagesMap = error.data;
+            for(var inputId in mapFieldIdToMessagesMap) {
+                var mapErrorCode2Message = mapFieldIdToMessagesMap[inputId];
+                var $errorInputArea = $('#'+inputId+'Err');
+                var htmlError = '';
+                for(var errorCode in mapErrorCode2Message) {
+                    var message = mapErrorCode2Message[errorCode];
+                    htmlError += '<p>' + message + '</p>';
+                }
+                $errorInputArea.html(htmlError);
+            }
+        }
 
-            $.each(errMessages,function setItemErrMessage(messageIndex,message){
-                errorHtml+= '<p>'+message+'</p>';
-            })
-            tdError.html(errorHtml);
+        function resetMessageError(){
+            $errorArea.html("");
         }
     }
-})(window.jQuery);
+})
+);
+

@@ -11,20 +11,7 @@ class UserController extends Zend_Controller_Action
     public function indexAction()
     {
         $formUser = new Application_Form_User();
-        $userTable = new Zend_Db_Table('tblUsers');
-
-        $rawUser = $userTable->fetchAll();
-        $users = $rawUser->toArray();
-        
-        $isUserPostData = $this->getRequest()->isPost();
-        if($isUserPostData){
-            $dataUserPost = $this->getRequest()->getPost();
-            $isValidUserData = $formUser->isValid($dataUserPost);
-            
-            if($isUserPostData){
-                // xử lý form
-            }
-        }
+        $users = $this->showAction();
         $this->view->form = $formUser;
         $this->view->users = $users;
         
@@ -32,72 +19,80 @@ class UserController extends Zend_Controller_Action
 
     public function showAction()
     {
-       // $this->_helper->viewRenderer->setNoRender();
-       
+        
+        $userTable = new Zend_Db_Table('tblUsers');
+
+        $rawUser = $userTable->fetchAll();
+        $users = $rawUser->toArray();
+        return $users;
     }
 
     public function addAction()
     {
-        $this->processProfile('insert');
+        $userForm = new Application_Form_User();
+        $userTable = new Zend_Db_Table('tblUsers');
+        $userSubmitForm = $this->getRequest()->isPost();
+
+        if (!$userSubmitForm) {
+            $this->getResponse()->setHttpResponseCode(400);
+            return $this->_helper->json([
+                'message' => 'Add user support POST method only',
+                'data' => []
+            ]);
+        }
+
+        $isValidUserData = $userForm->isValid($this->getRequest()->getPost());
+        $nameErr = $userForm->name->getMessages();
+        $ageErr = $userForm->age->getMessages();
+        
+        if($isValidUserData){
+            $filteredUser = $userForm->getValues();
+            unset($filteredUser['idUser']);
+            $userId = $userTable->insert($filteredUser);
+            $filteredUser['id'] = $userId;
+            return $this->_helper->json($filteredUser);
+        }
+
+        $this->getResponse()->setHttpResponseCode(400);
+        $this->_helper->json([
+            'message' => 'Invalid user form data',
+            'data' => $userForm->getMessages()
+        ]);
     }
 
     public function updateAction()
     {
-        $this->processProfile("update");
-    }
-
-    public function processProfile($processMethod){
-        $formUser = new Application_Form_User();
+        $userForm = new Application_Form_User();
         $userTable = new Zend_Db_Table('tblUsers');
 
-        if(isset($_POST)){
-            $isValidUserData = $formUser->isValid($_POST);
-            $nameErr = $formUser->name->getMessages();
-            $ageErr = $formUser->age->getMessages();
-
-            $defineMessages = [
-                    'success' => true,
-                    'err' =>[
-                        'tdNameErr' => [],
-                        'tdAgeErr' => [],
-                    ]
-            ];
-            
-            if($isValidUserData){
-                $this->actionProcessProFile($processMethod,$_POST,$userTable,$defineMessages);
-            }else{
-                $defineMessages['success'] = false;
-                /* set message error by jquery */
-                $err = [
-                    'tdNameErr' => [],
-                    'tdAgeErr' => [],
-                ];
-                if(!empty($nameErr)){
-                    $err['tdNameErr']= $nameErr;
-                }
-                if(!empty($ageErr)){
-                    $err['tdAgeErr']= $ageErr;
-                }
-                $defineMessages['err'] = $err;
-            }
-           
-        echo json_encode($defineMessages);
-        }   
-    }
-    protected function actionProcessProFile($processMethod,$dataForm,$userTable,&$defineMessages){
-        switch(strtolower($processMethod)){
-            case "insert":
-                $lastInsertId = $userTable->insert($dataForm);
-                $defineMessages['lastInsertId'] = $lastInsertId;
-            break;
-            case "update":
-                $id = $dataForm['id'];
-                unset($dataForm['id']);
-                $userTable->update($dataForm,["id = ?"=>$id]);
-            break;
+        $userSubmitForm = $this->getRequest()->isPost();
+        
+        
+        if (!$userSubmitForm) {
+            $this->getResponse()->setHttpResponseCode(400);
+            return $this->_helper->json([
+                'message' => 'Update must be method Post',
+                'data' => []
+            ]);
         }
+        
+        $isInValidUser = !$userForm->isValid($this->getRequest()->getPost());
+        
+        if ($isInValidUser) {
+            $this->getResponse()->setHttpResponseCode(400);
+            return $this->_helper->json([
+                'message' => 'invalid form data',
+                'data' => $userForm->getMessages()
+            ]);
+        }
+        
+        $filteredUser = $userForm->getValues();
+        $dataPostForm = $this->getRequest()->getPost();
+        unset($filteredUser['idUser']);
+        $userId = $dataPostForm['id'];
+        $userTable->update($filteredUser,['id = ?' => $userId]);
+        $this->_helper->json($dataPostForm);
     }
-
 }
 
 
