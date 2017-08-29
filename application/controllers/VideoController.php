@@ -26,7 +26,7 @@ class VideoController extends Zend_Controller_Action
         
         $clientPostForm = $this->getRequest()->isPost();
          
-        if($clientPostForm){
+        if ($clientPostForm) {
             $dataFormPosted = $this->getRequest()->getPost();
             $isValidVideoForm = $videoForm->isValid($dataFormPosted);
             $nameErr = $videoForm->name->getMessages();
@@ -36,9 +36,10 @@ class VideoController extends Zend_Controller_Action
                     'listErrName' =>[],
                     'listErrUser' =>[],
                 ];
-            if($isValidVideoForm){
+            if ($isValidVideoForm) {
                 $videoTable->insert($dataVideo = $videoForm->getValues());
-            }else{
+            }
+            else {
                 
                 if(!empty($nameErr)){
                     $listErr['listErrName'] = $nameErr;

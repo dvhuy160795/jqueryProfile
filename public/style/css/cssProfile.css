@@ -9,3 +9,6 @@
 #nameErr,#ageErr{
     color: red;
 }
+#tableShowProfile{
+    border: 1 solid black;
+}

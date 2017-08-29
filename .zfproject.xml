@@ -16,6 +16,7 @@
           <actionMethod actionName="index"/>
           <actionMethod actionName="show"/>
           <actionMethod actionName="add"/>
+          <actionMethod actionName="update"/>
         </controllerFile>
         <controllerFile controllerName="Video">
           <actionMethod actionName="index"/>
@@ -62,6 +63,9 @@
           </viewControllerScriptsDirectory>
           <viewControllerScriptsDirectory forControllerName="Video">
             <viewScriptFile forActionName="delete"/>
+          </viewControllerScriptsDirectory>
+          <viewControllerScriptsDirectory forControllerName="User">
+            <viewScriptFile forActionName="update"/>
           </viewControllerScriptsDirectory>
         </viewScriptsDirectory>
         <viewHelpersDirectory/>

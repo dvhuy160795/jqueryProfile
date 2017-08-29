@@ -11,6 +11,7 @@ $nameErr = $formUser->name->getMessages();
 $ageLabel = $formUser->age->getLabel();
 $age = $formUser->age;
 $ageErr = $formUser->age->getMessages();
+$userId = $formUser->idUser;
 $btnShow = $formUser->Show;
 $btnAdd = $formUser->Add;
 $btnUpdate = $formUser->Update;
@@ -19,7 +20,7 @@ $btnUpdate = $formUser->Update;
 	<p>View script for controller <b>User</b> and script/action name <b>index</b></p>
 	<div id="control">
 	<form method="post" id="profileForm" action="">
-		<table>
+		<table >
 			<tr>
 				<td><?php echo $nameLabel; ?></td>
 				<td><?php echo $name; ?></td>
@@ -46,13 +47,14 @@ $btnUpdate = $formUser->Update;
 				<td colspan="2">
 				<?php echo $btnAdd; ?>
 				<?php echo $btnUpdate; ?>
+				<?php echo $userId;  ?>
 				</td>
 			</tr>
 		</table>
 		</form>
 	</div>
 	<div id="view">
-		<table>
+		<table id="tableShowProfile">
 			<thead>
 				<tr>
 					<th>Name</th>
@@ -69,8 +71,8 @@ $btnUpdate = $formUser->Update;
 					$userId = $user['id'];
 				?>
 				<tr id="<?php echo $userId ?>" class="rowUserInfo" >
-					<td><?php echo $userName?></td>
-					<td><?php echo $userAge ?></td>
+					<td class="name"><?php echo $userName?></td>
+					<td class="age"><?php echo $userAge ?></td>
 				</tr>
 				<?php endforeach; ?>
 			</tbody>

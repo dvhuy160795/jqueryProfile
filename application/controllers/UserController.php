@@ -38,6 +38,15 @@ class UserController extends Zend_Controller_Action
 
     public function addAction()
     {
+        $this->processProfile('insert');
+    }
+
+    public function updateAction()
+    {
+        $this->processProfile("update");
+    }
+
+    public function processProfile($processMethod){
         $formUser = new Application_Form_User();
         $userTable = new Zend_Db_Table('tblUsers');
 
@@ -45,12 +54,17 @@ class UserController extends Zend_Controller_Action
             $isValidUserData = $formUser->isValid($_POST);
             $nameErr = $formUser->name->getMessages();
             $ageErr = $formUser->age->getMessages();
+
             $defineMessages = [
-                    'success' => true
-                    ];
+                    'success' => true,
+                    'err' =>[
+                        'tdNameErr' => [],
+                        'tdAgeErr' => [],
+                    ]
+            ];
             
             if($isValidUserData){
-                $userTable->insert($_POST);
+                $this->actionProcessProFile($processMethod,$_POST,$userTable,$defineMessages);
             }else{
                 $defineMessages['success'] = false;
                 /* set message error by jquery */
@@ -66,13 +80,27 @@ class UserController extends Zend_Controller_Action
                 }
                 $defineMessages['err'] = $err;
             }
+           
         echo json_encode($defineMessages);
-            
+        }   
+    }
+    protected function actionProcessProFile($processMethod,$dataForm,$userTable,&$defineMessages){
+        switch(strtolower($processMethod)){
+            case "insert":
+                $lastInsertId = $userTable->insert($dataForm);
+                $defineMessages['lastInsertId'] = $lastInsertId;
+            break;
+            case "update":
+                $id = $dataForm['id'];
+                unset($dataForm['id']);
+                $userTable->update($dataForm,["id = ?"=>$id]);
+            break;
         }
     }
 
-
 }
+
+
 
 
 
